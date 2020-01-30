@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link href="{{ url_for('static', filename='css/game.css') }}" rel="stylesheet">
+</head>
+<body>
+	
+<div class="game">
+	<div id="errors"></div>
+{% for board in game.boards %}
+	<div id="board{{board.id}}" class="board">
+	{% for field in board.fields %}
+		<div id="board{{board.id}}_X{{ field.x }}_Y{{field.y}}" class="field"></div>
+	{% endfor %}	
+	</div>
+{% endfor %}
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+<script src="{{ url_for('static', filename='js/game.js') }}"></script>
+</body>
+</html>
