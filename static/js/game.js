@@ -21,6 +21,9 @@ $(document).ready(function(){
 });
 
 function renderGame(result) {
+	//todo remove
+	console.log(result);
+
 	renderBoards(result);
 	renderErrors(result);
 }
@@ -29,7 +32,10 @@ function renderErrors(result){
 	const errors = result.violations.messages;
 	$('#errors').empty();
 	errors.forEach((error) => {
-		$('#errors').append(`<p class='error'>${translate(error, pl)}</p>`);
+		const translatedError = `<p class='error'>${translate(error, pl)}</p>`;
+		if (translatedError !== null) {
+			$('#errors').append(translatedError);	
+		}
 	});
 }
 
@@ -80,9 +86,8 @@ function translate(key, object) {
 }
 
 const pl = {
-	'cant_mark_inactive_board': 'Nie możesz zaznaczyć nieaktywnej planszy',
-	'field_out_of_board': 'Zarządano zaznaczenia ruchu z poza planszy',
-	'board_already_winned': 'Nie możesz zaznaczyć już wygranej planszy',
-	'no_such_board': 'Nie planszy o tym id',
-	'field_already_marked': 'Nie można zaznaczyć już zaznaczonego pola!'
+	'cant_mark_inactive_board': 'Nie możesz zaznaczyć nieaktywnej planszy!',
+	'field_already_marked': 'Nie możesz zaznaczyć już zaznaczonego pola!',
+	'field_out_of_board': 'Zarządano zaznaczenia pola z poza planszy',
+	'no_such_board': 'Nie ma planszy o tym id'
 };

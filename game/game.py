@@ -24,8 +24,21 @@ class Game(Serializable):
 		self.winned_boards_x = []
 		self.winner = None
 		self.activeBoardId = None
+	
+	def move(self, move: Move):
+		if self.winner:
+			return
 
-	def validateMove(self, move: Move)-> Violations:
+		self.violations = self.__validateMove(move)
+		if not self.violations.isEmpty():
+			return
+
+		self.boards.markField(move, self.turn)
+		self.__updateWinner(self.turn)
+		self.__updateActiveBoard(move)
+		self.__changeTurn()
+
+	def __validateMove(self, move: Move)-> Violations:
 		violations = Violations()
 		if not move.field.isInBoard():
 			violations.add(FIELD_OUT_OF_BOARD)
@@ -45,19 +58,6 @@ class Game(Serializable):
 
 		return violations
 
-	def move(self, move: Move):
-		if self.winner:
-			return
-
-		self.violations = self.validateMove(move)
-		if not self.violations.isEmpty():
-			return
-
-		self.boards.markField(move, self.turn)
-
-		self.__updateWinner(self.turn)
-		self.__updateActiveBoard(move)
-		self.__changeTurn()
 
 	def __updateActiveBoard(self, move: Move):
 		self.activeBoardId = self.__getActiveBoardIdByXY(move.field.x, move.field.y)
@@ -77,8 +77,8 @@ class Game(Serializable):
 
 	def __addToWinnedBoards(self, board: Board):
 		winnedBoard = self.__getWinnedBoardsBySign(board.winner)
-		winnedBoard.append(board.id)
-		winnedBoard = list(set(winnedBoard))
+		if board.id not in winnedBoard:
+			winnedBoard.append(board.id)
 
 	def __getWinnedBoardsBySign(self, sign: Sign):
 		return self.winned_boards_x if sign == Sign.X else self.winned_boards_o
@@ -87,5 +87,4 @@ class Game(Serializable):
 		self.turn = Sign.opposite(self.turn)
 	
 	def __getActiveBoardIdByXY(self, x:int, y:int)-> int:
-		print(x, y)
 		return (y-1)*BOARD_SIZE + x;

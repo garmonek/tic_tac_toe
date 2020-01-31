@@ -29,4 +29,3 @@ class Boards():
 	def updateWinner(self, turn: Sign):
 		for board in self.boards:
 			board.updateWinner(turn)
-			return
