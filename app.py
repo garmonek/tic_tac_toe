@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 from game import *
 from game.tests.moves import *
 
@@ -24,6 +24,23 @@ def home():
 	# moveDict = {'move':{'x':1, 'y':1,'boardId':1}}
 	# move = Move.fromRequest(moveDict)
 	return render_template('index.html', game=game)
+
+@app.route("/reset")
+def reset():
+	game.__init__()
+	return redirect(url_for('home'))
+
+@app.route("/hotSeat")
+def hotSeat():
+	game.__init__()
+	game.deactivateBoot()
+	return redirect(url_for('home'))
+
+@app.route("/vsBot")
+def vsBot():
+	game.__init__()
+	game.activateBot()
+	return redirect(url_for('home'))
 
 @app.route("/ajax", methods = ['POST'])
 def ajax():

@@ -3,28 +3,35 @@ from game.boards import Boards
 from game.move import Move
 from game.violations import Violations
 from game.serializable import Serializable
-from game.constants import BOARDS, BOARD_SIZE, FIELD_OUT_OF_BOARD, FIELD_ALREADY_MARKED, NO_SUCH_BOARD, CAN_MARK_INACTIVE_BOARD
+from game.constants import BOARDS, BOARD_SIZE, FIELD_OUT_OF_BOARD, FIELD_ALREADY_MARKED, NO_SUCH_BOARD, CAN_MARK_INACTIVE_BOARD, BOARD_ALREADY_WINNED
 from game.board import Board
 
 class Game(Serializable):
 	turn = None
 	boards = None
 	current_board = None
-	winned_boards_x = []
-	winned_boards_o = []
+	winnedBoardsX = []
+	winnedBoardsO = []
 	winner = None
 	violations = None
 	activeBoardId = None
+	bootIsActive = False
 
 	def __init__(self, sign: Sign=Sign.X):
 		self.turn = sign
 		self.boards = Boards()
 		self.violations = Violations()
-		self.winned_boards_o = []
-		self.winned_boards_x = []
+		self.winnedBoardsO = []
+		self.winnedBoardsX = []
 		self.winner = None
 		self.activeBoardId = None
 	
+	def activateBot(self):
+		self.bootIsActive = True
+
+	def deactivateBoot(self):
+		self.bootIsActive = False
+
 	def move(self, move: Move):
 		if self.winner:
 			return
@@ -42,9 +49,9 @@ class Game(Serializable):
 		violations = Violations()
 		if not move.field.isInBoard():
 			violations.add(FIELD_OUT_OF_BOARD)
-		#todo to remove
-		# if move.boardId in self.winned_boards_x or move.boardId in self.winned_boards_o:
-		# 	violations.add(BOARD_ALREADY_WINNED)
+
+		if self.__boardIsWinned(move.boardId):
+			violations.add(BOARD_ALREADY_WINNED)
 
 		if self.activeBoardId != None and move.boardId != self.activeBoardId:
 			violations.add(CAN_MARK_INACTIVE_BOARD)
@@ -61,12 +68,14 @@ class Game(Serializable):
 
 	def __updateActiveBoard(self, move: Move):
 		self.activeBoardId = self.__getActiveBoardIdByXY(move.field.x, move.field.y)
+		if self.__boardIsWinned(self.activeBoardId):
+			self.activeBoardId = None
 
 	def __updateWinner(self, turn: Sign):
 		self.boards.updateWinner(self.turn)
 		self.__updateWinnedBoards()
 		winnedBoard = self.__getWinnedBoardsBySign(turn)
-		if len(winnedBoard) > (BOARDS // 2):
+		if len(winnedBoard) >= BOARD_SIZE:
 			self.winner = turn
 
 	def __updateWinnedBoards(self):
@@ -81,10 +90,13 @@ class Game(Serializable):
 			winnedBoard.append(board.id)
 
 	def __getWinnedBoardsBySign(self, sign: Sign):
-		return self.winned_boards_x if sign == Sign.X else self.winned_boards_o
+		return self.winnedBoardsX if sign == Sign.X else self.winnedBoardsO
 
 	def __changeTurn(self):
 		self.turn = Sign.opposite(self.turn)
 	
 	def __getActiveBoardIdByXY(self, x:int, y:int)-> int:
 		return (y-1)*BOARD_SIZE + x;
+
+	def __boardIsWinned(self, boardId: int):
+		return True if boardId in (self.winnedBoardsX + self.winnedBoardsO) else False

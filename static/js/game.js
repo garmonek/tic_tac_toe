@@ -1,4 +1,6 @@
-const url = '/ajax'
+const url = '/ajax';
+const MESSAGE_DIV_ID = '#messages';
+const GAME_WINNED_KEY = 'game_winned';
 
 function post(json){
     $.ajax({
@@ -21,20 +23,27 @@ $(document).ready(function(){
 });
 
 function renderGame(result) {
-	//todo remove
-	console.log(result);
-
+	$(MESSAGE_DIV_ID).empty();
+	renderWinner(result)
 	renderBoards(result);
 	renderErrors(result);
 }
 
+function renderWinner(result) {
+	if (result.winner !== null) {
+		const translatedError = `<p class='success'>${translate(GAME_WINNED_KEY, pl)}${result.winner._value_}</p>`;
+		if (translatedError !== null) {
+			$(MESSAGE_DIV_ID).append(translatedError);	
+		}
+	}
+}
+
 function renderErrors(result){
 	const errors = result.violations.messages;
-	$('#errors').empty();
 	errors.forEach((error) => {
 		const translatedError = `<p class='error'>${translate(error, pl)}</p>`;
 		if (translatedError !== null) {
-			$('#errors').append(translatedError);	
+			$(MESSAGE_DIV_ID).append(translatedError);
 		}
 	});
 }
@@ -43,9 +52,19 @@ function renderBoards(result){
 	const boards = result.boards.boards || null;
 	const activeBoardId = result.activeBoardId;
 	boards.forEach((board) => {
+		markWinnedBoard(board);
 		selectActiveBoard(board, activeBoardId);
 		renderFields(board);
 	});
+}
+
+function markWinnedBoard(board) {
+	const htmlBoardId = createBoardId(board);
+	const winner = board.winner ? board.winner._value_ : null;
+	$(htmlBoardId).removeClass('X', 'Y');
+	if (winner) {
+		$(htmlBoardId).addClass(winner);
+	}
 }
 
 function selectActiveBoard(board, activeBoardId) {
@@ -89,5 +108,7 @@ const pl = {
 	'cant_mark_inactive_board': 'Nie możesz zaznaczyć nieaktywnej planszy!',
 	'field_already_marked': 'Nie możesz zaznaczyć już zaznaczonego pola!',
 	'field_out_of_board': 'Zarządano zaznaczenia pola z poza planszy',
-	'no_such_board': 'Nie ma planszy o tym id'
+	'no_such_board': 'Nie ma planszy o tym id',
+	'board_already_winned': 'Nie możesz zaznaczyć już wygranej planszy, zaznacz dowolną inną',
+	'game_winned': 'Grę wygrywa '
 };

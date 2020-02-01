@@ -21,6 +21,14 @@
 	height: 100%;
 }
 
+.X>.field{
+	background: purple;
+}
+
+.O>.field{
+	background: yellow;
+}
+
 .field{
 	display: flex;
 	justify-content: center;
@@ -32,4 +40,32 @@
 
 .activeBoard>.field {
     background: lightgreen;
+}
+
+#messages{
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	margin: auto;
+	display: flex;
+	align-items: center;
+	flex-flow: column;
+}
+
+#messages>.error, #messages>.success{
+	border-radius: 0.5em;
+	line-height: 2em;
+	display: flex;
+	justify-content: center;
+	padding: 0.5em;
+	margin: 0.1em;
+}
+
+.error{
+	background-color: lightcoral;
+}
+
+.success{
+	background-color: lightgreen;
 }

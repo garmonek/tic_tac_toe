@@ -8,7 +8,14 @@
 <body>
 	
 <div class="game">
-	<div id="errors"></div>
+	<div class="menu">
+		<ul>
+			<li><a href="{{ url_for('reset') }}">Reset</a></li>
+			<li><a href="{{ url_for('hotSeat') }}">HotSeat</a></li>
+			<li><a href="{{ url_for('vsBot') }}">VsBot</a></li>
+		</ul>
+	</div>
+	<div id="messages" class="messages"></div>
 	<div class="board gridGap">
 	{% for board in game.boards %}
 		<div id="board{{board.id}}" class="board">
