@@ -3,6 +3,8 @@ BOARD_SIZE = 3
 BOARDS_RANGE = range(1, BOARDS + 1)
 BOARD_SIZE_RANGE = range(1, BOARD_SIZE + 1)
 
+BOT_MAX_RECURSION = 150
+
 FIELD_OUT_OF_BOARD = 'field_out_of_board'
 BOARD_ALREADY_WINNED = 'board_already_winned'
 NO_SUCH_BOARD = 'no_such_board'

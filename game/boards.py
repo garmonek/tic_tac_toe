@@ -29,3 +29,6 @@ class Boards():
 	def updateWinner(self, turn: Sign):
 		for board in self.boards:
 			board.updateWinner(turn)
+
+	def getNotWinnedBoards(self):
+		return [board for board in self.boards if board.winner == None]

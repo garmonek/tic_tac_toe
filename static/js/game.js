@@ -9,12 +9,8 @@ function post(json){
       dataType:'json',
       contentType: 'application/json',
       data:JSON.stringify(json),
-      success: function(result){
-        renderGame(result);
-    },
-      error: function(err, s , exception){
-          console.log(exception);
-      }
+      success: (result) => renderGame(result),
+      error: (err, s , exception) => console.log(exception),
   });
 }
 
@@ -23,6 +19,7 @@ $(document).ready(function(){
 });
 
 function renderGame(result) {
+	console.log(result);
 	$(MESSAGE_DIV_ID).empty();
 	renderWinner(result)
 	renderBoards(result);
@@ -84,7 +81,7 @@ function renderFields(board) {
 		if (field.mark === 'X' || field.mark === 'O') {
 			$(id).append(field.mark);
 		}
-		$(id).bind('click', () => post(createMove(board, field)));
+		$(id).bind('click',() => post(createMove(board, field)));
 	});
 }
 

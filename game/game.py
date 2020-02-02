@@ -36,7 +36,7 @@ class Game(Serializable):
 		if self.winner:
 			return
 
-		self.violations = self.__validateMove(move)
+		self.violations = self.validateMove(move)
 		if not self.violations.isEmpty():
 			return
 
@@ -45,7 +45,7 @@ class Game(Serializable):
 		self.__updateActiveBoard(move)
 		self.__changeTurn()
 
-	def __validateMove(self, move: Move)-> Violations:
+	def validateMove(self, move: Move)-> Violations:
 		violations = Violations()
 		if not move.field.isInBoard():
 			violations.add(FIELD_OUT_OF_BOARD)

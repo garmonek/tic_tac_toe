@@ -28,6 +28,9 @@ class Board():
 	def getMarkedFields(self, sign: Sign)-> list:
 		return [field for field in self.fields if field.mark == sign.value]
 
+	def getUnmarkedFields(self):
+		return [field for field in self.fields if field.mark == None]
+
 	def winByDiagonal(self, fields: list)-> bool:
 		differences = [field.x - field.y for field in fields]
 		if differences.count(0) == BOARD_SIZE:

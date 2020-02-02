@@ -10,19 +10,6 @@ game = Game()
 
 @app.route("/")
 def home():
-	# v = game.validateMove(badMove1())
-	# v = game.validateMove(goodMove())
-	# for s in v:
-	# 	print(s)
-	# print(v.isEmpty())
-	# print(v.toJSON())
-	# game.move(badMove1())
-	# print(game.toJSON())
-	# print(game.turn)
-	# game.move(goodMove())
-	# print(game.turn)
-	# moveDict = {'move':{'x':1, 'y':1,'boardId':1}}
-	# move = Move.fromRequest(moveDict)
 	return render_template('index.html', game=game)
 
 @app.route("/reset")
@@ -50,12 +37,16 @@ def ajax():
 		move = Move.fromRequest(req)
 		if move == None:
 			return game.toJSON()
-		game.move(move)
+		
+		game.move(move)		
+		if not game.violations.isEmpty() or game.winner != None:
+			return game.toJSON()
 
-	if cmd == RESTART_CMD:
-		game.__init__()
+		if game.bootIsActive == True:
+			botMove = Bot(game).createMove()
+			game.move(botMove)
 
 	return game.toJSON()
     
 if __name__ == "__main__":
-    app.run(debug=True)
+	app.run( port=5002, debug=True)
